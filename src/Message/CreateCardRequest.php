@@ -95,5 +95,10 @@ class CreateCardRequest extends AbstractRequest
     {
         return new CreateCardResponse($this, $xml);
     }
+    
+    protected function createResponse($data, $headers = [])
+    {
+        return $this->response = $this->newResponse($data);
+    }
 
 }
