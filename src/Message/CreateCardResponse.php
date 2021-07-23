@@ -35,7 +35,7 @@ class CreateCardResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        return isset($this->data['Success']) && true === $this->data['Success'];
+        return isset($this->data['Success']) && filter_var($this->data['Success'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
 
     /**
