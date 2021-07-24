@@ -103,6 +103,14 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getCardReference()
     {
-        return isset($this->data['CreditCardTransactionResults']['TokenizedPAN']) ? $this->data['CreditCardTransactionResults']['TokenizedPAN'] : null;
+        return ( 
+                array_key_exists('CreditCardTransactionResults', $this->data) 
+                && array_key_exists('TokenizedPAN', $this->data['CreditCardTransactionResults'])
+               )? $this->data['CreditCardTransactionResults']['TokenizedPAN'] : 
+                ( array_key_exists('TokenizedPAN', $this->data) ? $this->data['TokenizedPAN'] : 
+                    ( array_key_exists('Token', $this->data) ? $this->data['Token'] : 
+                        null 
+                    )
+                );
     }
 }
