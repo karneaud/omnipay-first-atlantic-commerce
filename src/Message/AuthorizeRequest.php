@@ -116,7 +116,7 @@ class AuthorizeRequest extends AbstractRequest
              'frequency',
                 'numberOfRecurrences');
             
-            if( !($date = strtotime($this->getExecutionDate()) ) || ($date < time()) ) throw new InvalidRequestException(401, 'Invalid Execution Date');
+            if( !($date = strtotime($this->getExecutionDate()) ) || ($date < time()) ) throw new InvalidRequestException('Invalid Execution Date', 401 );
             
             $transactionDetails = array_merge($transactionDetails, [
                                         'ExecutionDate' => date('Ymd',$date),
