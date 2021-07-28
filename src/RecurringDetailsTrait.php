@@ -7,7 +7,7 @@ trait RecurringDetailsTrait
     
     protected function getRecurringTransactionCode(): int
     {
-        return $this->getTransactionCode() + ($this->getIsFreeTrial()? 8192 : ($this->getIsSubsequentRecurring() ? 2048 : 4096))            
+        return $this->getTransactionCode() + ($this->getIsFreeTrial()? 8192 : ($this->getIsSubsequentRecurring() ? 2048 : 4096));           
     }
     
     public function setIsFreeTrial(bool $value = false) 
