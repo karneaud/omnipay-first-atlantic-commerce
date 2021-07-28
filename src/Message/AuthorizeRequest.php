@@ -3,6 +3,7 @@
 namespace Omnipay\FirstAtlanticCommerce\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\FirstAtlanticCommerce\RecurringDetailsTrait;
 
 /**
  * FACPG2 Authorize Request
@@ -15,9 +16,12 @@ use Omnipay\Common\Exception\InvalidRequestException;
  * There are also 2 optional boolean parameters outside of the normal Omnipay parameters:
  * requireAVSCheck - will tell FAC that we want the to verify the address through AVS
  * createCard - will tell FAC to create a tokenized card in their system while it is authorizing the transaction
+ * 
+ * Also added is additional optional parameters for recurring payments. See trait for more info
  */
 class AuthorizeRequest extends AbstractRequest
 {
+    use RecurringDetailsTrait;
     /**
      * @var string;
      */
@@ -105,6 +109,24 @@ class AuthorizeRequest extends AbstractRequest
             'SignatureMethod'  => 'SHA1',
             'TransactionCode'  => $this->getTransactionCode()
         ];
+        
+         if( $this->getIsRecurring()) {
+            $this->validate(
+            'ExecutionDate',
+             'Frequency',
+                'NumberOfRecurrences');
+            
+            if( !($date = strtotime($this->getExecutionDate()) ) || ($date < time()) ) throw new InvalidRequestException(401, 'Invalid Execution Date');
+            
+            $transactionDetails = array_merge($transactionDetails, [
+                                        'ExecutionDate' => date('Ymd',$date),
+                                        'Frequency' => $this->getFrequency(),
+                                        'NumberOfRecurrences' => $this->getNumberOfRecurrences(),
+                                        'TransactionCode' => $this->getRecurringTransactionCode(),
+                                        'IsRecurring' => $this->getIsRecurring()
+                                    ]);
+        }
+
 
         $billingDetails = [
             'BillToAddress'     => $this->getCard()->getAddress1(),
