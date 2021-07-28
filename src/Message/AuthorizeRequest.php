@@ -112,9 +112,9 @@ class AuthorizeRequest extends AbstractRequest
         
          if( $this->getIsRecurring()) {
             $this->validate(
-            'ExecutionDate',
-             'Frequency',
-                'NumberOfRecurrences');
+            'executionDate',
+             'frequency',
+                'numberOfRecurrences');
             
             if( !($date = strtotime($this->getExecutionDate()) ) || ($date < time()) ) throw new InvalidRequestException(401, 'Invalid Execution Date');
             
