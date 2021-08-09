@@ -2,9 +2,9 @@
 
 namespace Omnipay\FirstAtlanticCommerce\Message;
 
-
+use Omnipay\FirstAtlanticCommerce\Message\TransactionModificationResponse as Response;
 /**
- * FACPG2 Refund Request
+ * FACPG2 Cancel Recurring Request
  *
  * Required Parameters:
  * transactionId - Corresponds to the merchant's transaction ID
