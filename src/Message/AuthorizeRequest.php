@@ -4,6 +4,7 @@ namespace Omnipay\FirstAtlanticCommerce\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\FirstAtlanticCommerce\RecurringDetailsTrait;
+use Omnipay\FirstAtlanticCommerce\Message\AuthorizeResponse as Response;
 
 /**
  * FACPG2 Authorize Request
@@ -16,7 +17,7 @@ use Omnipay\FirstAtlanticCommerce\RecurringDetailsTrait;
  * There are also 2 optional boolean parameters outside of the normal Omnipay parameters:
  * requireAVSCheck - will tell FAC that we want the to verify the address through AVS
  * createCard - will tell FAC to create a tokenized card in their system while it is authorizing the transaction
- * 
+ *
  * Also added is additional optional parameters for recurring payments. See trait for more info
  */
 class AuthorizeRequest extends AbstractRequest
@@ -109,22 +110,22 @@ class AuthorizeRequest extends AbstractRequest
             'SignatureMethod'  => 'SHA1',
             'TransactionCode'  => $this->getTransactionCode()
         ];
-        
+
          if( $this->getIsRecurring()) {
             $this->validate(
             'executionDate',
              'frequency',
                 'numberOfRecurrences');
-            
+
             if( !($date = strtotime($this->getExecutionDate()) ) || ($date <= strtotime('yesterday')) ) throw new InvalidRequestException('Invalid Execution Date', 401 );
-            
-            $transactionDetails = array_merge($transactionDetails, [
+
+            $recurringDetails = [
                                         'ExecutionDate' => date('Ymd',$date),
                                         'Frequency' => $this->getFrequency(),
                                         'NumberOfRecurrences' => $this->getNumberOfRecurrences(),
                                         'TransactionCode' => $this->getRecurringTransactionCode(),
                                         'IsRecurring' => $this->getIsRecurring()
-                                    ]);
+                                    ];
         }
 
 
@@ -151,6 +152,8 @@ class AuthorizeRequest extends AbstractRequest
             'CardDetails'        => $cardDetails,
             'BillingDetails'     => $billingDetails
         ];
+
+        if(isset($recurringDetails)) $data = array_merge($data, ['RecurringDetails' => $recurringDetails ]);
 
         return $data;
     }
@@ -191,7 +194,7 @@ class AuthorizeRequest extends AbstractRequest
      */
     protected function newResponse($xml)
     {
-        return new AuthorizeResponse($this, $xml);
+        return new Response($this, $xml);
     }
 
     /**
